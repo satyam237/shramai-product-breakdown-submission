@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shram.ai — Product Breakdown & Future Scope</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a08;
+    --surface: #111110;
+    --surface2: #1a1a18;
+    --border: #2a2a26;
+    --accent: #d4f264;
+    --accent2: #f2c464;
+    --accent3: #64c8f2;
+    --text: #e8e8e0;
+    --muted: #7a7a70;
+    --dim: #3a3a36;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 64px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(212,242,100,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-label::before {
+    content: '';
+    display: inline-block;
+    width: 20px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  h1 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    margin-top: 20px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-key {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .meta-val {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 64px;
+  }
+
+  section {
+    padding: 64px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--dim);
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #b0b0a0;
+    margin-bottom: 12px;
+  }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--dim);
+  }
+
+  .card-icon {
+    font-size: 20px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card-tag {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  /* FLOW */
+  .flow {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0;
+    align-items: center;
+    margin-top: 32px;
+  }
+
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .flow-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--dim);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .flow-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .flow-arrow {
+    text-align: center;
+    color: var(--dim);
+    font-size: 20px;
+    padding: 0 8px;
+  }
+
+  /* INSIGHT ROWS */
+  .insight-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .insight-row:last-child { border-bottom: none; }
+
+  .insight-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 2px;
+  }
+
+  /* ROADMAP */
+  .roadmap {
+    margin-top: 32px;
+    position: relative;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 80px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--dim), transparent);
+  }
+
+  .phase {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 32px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+
+  .phase-timeline {
+    text-align: right;
+    padding-top: 4px;
+  }
+
+  .phase-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    position: absolute;
+    left: 75px;
+    top: 8px;
+    box-shadow: 0 0 12px rgba(212,242,100,0.4);
+  }
+
+  .phase-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+
+  .phase-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .phase-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  .bullet-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .bullet-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: #b0b0a0;
+    font-size: 13px;
+  }
+
+  .bullet-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* MOAT TABLE */
+  .moat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+    font-size: 13px;
+  }
+
+  .moat-table th {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .moat-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: #b0b0a0;
+    vertical-align: top;
+  }
+
+  .moat-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .moat-table .name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .badge-green { background: rgba(212,242,100,0.15); color: var(--accent); }
+  .badge-yellow { background: rgba(242,196,100,0.15); color: var(--accent2); }
+  .badge-blue { background: rgba(100,200,242,0.15); color: var(--accent3); }
+  .badge-red { background: rgba(242,100,100,0.15); color: #f26464; }
+
+  /* GROWTH LEVERS */
+  .lever-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .lever {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    border-left: 3px solid;
+  }
+
+  .lever-acq { border-left-color: var(--accent); }
+  .lever-ret { border-left-color: var(--accent2); }
+  .lever-rev { border-left-color: var(--accent3); }
+  .lever-moat { border-left-color: #f26464; }
+
+  .lever-type {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  /* OBSERVATIONS BOX */
+  .obs-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-top: 24px;
+  }
+
+  .obs-box blockquote {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.5;
+    color: var(--text);
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 12px;
+  }
+
+  .obs-box cite {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 64px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent);
+  }
+
+  /* HIGHLIGHT */
+  mark {
+    background: rgba(212,242,100,0.15);
+    color: var(--accent);
+    padding: 0 4px;
+    border-radius: 2px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 768px) {
+    header, .container, footer { padding-left: 24px; padding-right: 24px; }
+    .flow { grid-template-columns: 1fr; }
+    .flow-arrow { display: none; }
+    .insight-row { grid-template-columns: 1fr; }
+    .lever-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .roadmap::before { left: 40px; }
+    .phase { grid-template-columns: 40px 1fr; gap: 16px; }
+    .phase-dot { left: 35px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ──────────────── HEADER ──────────────── -->
+<header>
+  <div class="container" style="padding: 0;">
+    <div class="header-label">Founder's Office — Product Intelligence Brief</div>
+    <h1>Shram.ai —<br /><em>Product Breakdown</em><br />& Growth Roadmap</h1>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-key">Prepared for</span>
+        <span class="meta-val">Ojasvika Sahu, Co-Founder</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-key">Date</span>
+        <span class="meta-val">April 2026</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-key">Stage</span>
+        <span class="meta-val">Pre-Seed · Shram Intelligence, Inc.</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-key">Category</span>
+        <span class="meta-val">Product Breakdown & Future Scope</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ──────────────── 01. WHAT IS SHRAM ──────────────── -->
+<div class="container">
+
+<section id="what">
+  <div class="section-tag">01 — What Shram Is</div>
+
+  <div class="obs-box">
+    <blockquote>"You had a call yesterday. You promised to send a revised proposal but you forgot. Three days pass. The conversation goes cold. Not because you didn't care — but because no one reminded you."</blockquote>
+    <cite>— Shram.ai homepage</cite>
+  </div>
+
+  <p style="margin-top: 24px;">Shram is a <mark>Mac desktop AI agent</mark> that eliminates the professional cost of forgotten follow-ups. It passively watches your Gmail, WhatsApp, and Google Calendar — no API integrations, no setup — and surfaces actionable, context-aware follow-up drafts before a relationship goes cold.</p>
+
+  <p>The core insight: follow-up failure isn't a motivation problem. It's a <mark>cognitive load + recollection problem</mark>. Shram removes both.</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-name">Finds</div>
+      <p style="font-size: 12px; margin: 0; color: var(--muted);">Watches your screen activity across Gmail, WhatsApp, Calendar. Detects missed responses, cold threads, unscheduled meetings.</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-name">Drafts</div>
+      <p style="font-size: 12px; margin: 0; color: var(--muted);">Uses an on-device memory layer — context from all past activity — to write a personalized, non-generic follow-up reply.</p>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-name">Finishes</div>
+      <p style="font-size: 12px; margin: 0; color: var(--muted);">Appears as a single-click task. You approve. Shram's desktop agent executes the send — email or WhatsApp — for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── 02. PRODUCT ANATOMY ──────────────── -->
+<section id="anatomy">
+  <div class="section-tag">02 — Product Anatomy</div>
+  <h2>Four core systems, one loop</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <span class="card-icon">👁</span>
+      <div class="card-tag">Layer 1</div>
+      <h3>Screen Observer</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Shram reads your screen natively on macOS — no OAuth, no API keys. This is both its moat and its friction point. Works OOB from day one.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🧠</span>
+      <div class="card-tag">Layer 2</div>
+      <h3>On-Device Memory</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Context accumulated from all activity over time. Knows that your proposal two months ago was at ₹8L/mo. Remembers tone, history, names. Privacy-preserving by design.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">✍️</span>
+      <div class="card-tag">Layer 3</div>
+      <h3>Draft Engine</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Generates personalized follow-up drafts. Not template fills. Mirrors your voice, references actual conversation context, flags correct timing.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">⚡</span>
+      <div class="card-tag">Layer 4</div>
+      <h3>Desktop Execution Agent</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Clicks and sends on your behalf via macOS automation. One button from task to done. This is the differentiator vs. pure CRM tools that only remind you to act.</p>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top: 32px;">
+    <div>
+      <h3>What Shram monitors</h3>
+      <ul class="bullet-list" style="margin-top: 12px;">
+        <li>Gmail (threads where you owe a reply)</li>
+        <li>WhatsApp (business/personal convos on desktop)</li>
+        <li>Google Calendar (meetings with implied next steps)</li>
+        <li>More channels listed as "coming soon"</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What Shram intentionally avoids</h3>
+      <ul class="bullet-list" style="margin-top: 12px;">
+        <li>Manual task creation (anti-Todoist thesis)</li>
+        <li>API-first integrations (zero setup philosophy)</li>
+        <li>Team/org features (individual-first)</li>
+        <li>Windows support (Mac-only, for now)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── 03. ICP ──────────────── -->
+<section id="icp">
+  <div class="section-tag">03 — Ideal Customer Profile</div>
+  <h2>Who Shram is for</h2>
+
+  <p>Shram's own copy says: <mark>"If your work runs on relationships that need to keep moving, Shram is for you."</mark></p>
+
+  <div class="insight-row" style="border-top: 1px solid var(--border);">
+    <div class="insight-label">Primary ICP</div>
+    <div>
+      <p style="margin: 0; color: var(--text);">Founders, sales professionals, consultants, and senior ICs whose daily output = relationship momentum. People who close deals, manage clients, or drive partnerships — where a delayed follow-up = lost revenue.</p>
+    </div>
+  </div>
+  <div class="insight-row">
+    <div class="insight-label">Behavioral signal</div>
+    <div>
+      <p style="margin: 0; color: var(--text);">They have 30–80 open conversations across channels at any time. They already use multiple tools (CRM, task manager, email) but still drop balls. They're not disorganized — they're overloaded.</p>
+    </div>
+  </div>
+  <div class="insight-row">
+    <div class="insight-label">Platform constraint</div>
+    <div>
+      <p style="margin: 0; color: var(--text);">Mac-only. This is a deliberate early-stage moat: macOS automation APIs are more mature, the ICP (tech-adjacent professionals, founders) skews Mac-heavy, and it filters for high-intent users.</p>
+    </div>
+  </div>
+  <div class="insight-row">
+    <div class="insight-label">Anti-ICP</div>
+    <div>
+      <p style="margin: 0; color: var(--text);">Ops/back-office teams, developers (low relationship surface area), Windows-only users, and heavy enterprise orgs with Salesforce CRM mandates.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── 04. COMPETITIVE LANDSCAPE ──────────────── -->
+<section id="competition">
+  <div class="section-tag">04 — Competitive Landscape</div>
+  <h2>Where Shram sits</h2>
+
+  <table class="moat-table">
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>What it does</th>
+        <th>Gap vs. Shram</th>
+        <th>Threat level</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="name">Superhuman</td>
+        <td>AI-accelerated email client. Reminds you of snoozes.</td>
+        <td>Email-only. Reminds, doesn't act. No WhatsApp/Cal. $30/mo premium.</td>
+        <td><span class="badge badge-yellow">Medium</span></td>
+      </tr>
+      <tr>
+        <td class="name">Notion AI / Linear</td>
+        <td>AI writing/task layer on top of PM tool</td>
+        <td>Requires manual task input. Not a passive watcher. Zero execution.</td>
+        <td><span class="badge badge-green">Low</span></td>
+      </tr>
+      <tr>
+        <td class="name">Reclaim / Motion</td>
+        <td>Smart calendar scheduling AI</td>
+        <td>Scheduling-focused. No follow-up detection. No comms layer.</td>
+        <td><span class="badge badge-green">Low</span></td>
+      </tr>
+      <tr>
+        <td class="name">HubSpot / Streak CRM</td>
+        <td>Sequence-based email follow-up for sales teams</td>
+        <td>Manual setup per contact. Template-based. Doesn't watch WhatsApp. B2B sales only.</td>
+        <td><span class="badge badge-yellow">Medium</span></td>
+      </tr>
+      <tr>
+        <td class="name">Lindy AI</td>
+        <td>Personal AI agent with Gmail + calendar integration</td>
+        <td>Requires explicit rule-building. API-first. No desktop execution. No on-device memory.</td>
+        <td><span class="badge badge-yellow">Medium</span></td>
+      </tr>
+      <tr>
+        <td class="name">OpenAI Operator / Anthropic CU</td>
+        <td>General computer-use agents from frontier labs</td>
+        <td>Not productized for follow-up use case. No memory layer. High latency, high cost.</td>
+        <td><span class="badge badge-red">Future risk</span></td>
+      </tr>
+      <tr>
+        <td class="name">Boomerang / FollowUpThen</td>
+        <td>Gmail-only follow-up reminders</td>
+        <td>Passive reminders only. No drafting. No WhatsApp. No execution.</td>
+        <td><span class="badge badge-green">Low</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="obs-box" style="margin-top: 28px;">
+    <blockquote>"Nobody has combined passive screen-reading + contextual memory + one-click execution across Gmail + WhatsApp. That's Shram's 3-layer defensibility."</blockquote>
+    <cite>— Competitive positioning thesis</cite>
+  </div>
+</section>
+
+<!-- ──────────────── 05. GAPS & RISKS ──────────────── -->
+<section id="gaps">
+  <div class="section-tag">05 — Honest Gaps & Risks</div>
+  <h2>What needs work</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-tag">Risk · Privacy perception</div>
+      <h3>Screen reading = trust barrier</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">"It watches my screen" is a hard sell. Shram needs a clear, visible on-device processing story. Key messaging: nothing leaves your device. Trust page, open security audit, and privacy FAQ are non-negotiables before PMF.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Risk · Platform lock</div>
+      <h3>Mac-only limits TAM</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">~30% of Indian professionals are on Mac vs. ~70% Windows. The current constraint is intentional but needs a clear Windows roadmap to justify investor narrative.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Gap · Channel coverage</div>
+      <h3>Slack, Teams, LinkedIn missing</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Many professionals' highest-value follow-ups live in Slack DMs and LinkedIn messages. The "coming soon" integrations need to ship fast or competitors will close the gap.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Gap · Feedback loop</div>
+      <h3>No explicit learning signal (visible)</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">The site says "it learns from you" but the feedback mechanism isn't clear. Users should be able to approve/reject/edit drafts and have that improve future drafts visibly.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Gap · Monetization</div>
+      <h3>No pricing visible anywhere</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Still in "request access" stage. Without a pricing signal, it's hard to validate willingness to pay. Even a waitlist with pricing teaser would help validate ICP and inform fundraising narrative.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Risk · Frontier labs</div>
+      <h3>OpenAI/Google could ship this</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Operator + Gmail context could approximate Shram at scale. The window is 12–18 months. Shram needs proprietary memory quality and distribution before that. Speed is the moat right now.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── 06. GROWTH LEVERS ──────────────── -->
+<section id="growth">
+  <div class="section-tag">06 — Growth Levers</div>
+  <h2>How Shram should grow</h2>
+
+  <div class="lever-grid">
+    <div class="lever lever-acq">
+      <div class="lever-type">Acquisition</div>
+      <h3>Founder-to-founder distribution</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Target Indian startup founder communities (YC India, Antler, Titan Capital networks, Bangalore founder WhatsApp groups). Founders are the exact ICP — relationship-driven work, Mac-heavy, pain is visceral. Word-of-mouth in this cluster moves fast.</p>
+    </div>
+    <div class="lever lever-acq">
+      <div class="lever-type">Acquisition</div>
+      <h3>Bottoms-up PLG via "sent by Shram" signature</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Every follow-up sent through Shram carries a subtle "powered by Shram" footer (opt-in). Viral loop: the people receiving beautifully-timed follow-ups become prospects. This is the Superhuman/Loom playbook.</p>
+    </div>
+    <div class="lever lever-ret">
+      <div class="lever-type">Retention</div>
+      <h3>Weekly relationship health digest</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Every Monday, Shram sends a "Your relationship health this week" — X follow-ups caught, Y sent, Z conversations that haven't moved in 14 days. Makes the value visible and creates a habit anchor.</p>
+    </div>
+    <div class="lever lever-ret">
+      <div class="lever-type">Retention</div>
+      <h3>Memory quality as retention</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">The longer users stay, the richer the memory layer, the better the drafts. This is a compounding switching cost. Shram should make this explicit: "Shram has 4 months of your relationship context. Here's what it remembers about [person]."</p>
+    </div>
+    <div class="lever lever-rev">
+      <div class="lever-type">Revenue</div>
+      <h3>Freemium → Pro model</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Free tier: 10 follow-up drafts/month, 30-day memory. Pro ($15–20/mo): unlimited drafts, unlimited memory, WhatsApp execution, and Slack channel (when available). Annual plan at 2-month discount.</p>
+    </div>
+    <div class="lever lever-rev">
+      <div class="lever-type">Revenue</div>
+      <h3>Team tier for small agencies/sales orgs</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">At 5–15 person teams, managers want to see follow-up metrics across the team. Shared contact context + team view = $30–50/seat/mo. This is the PLG → enterprise motion: individual adoption drives team buy.</p>
+    </div>
+    <div class="lever lever-moat">
+      <div class="lever-type">Moat-building</div>
+      <h3>Memory graph = relationship OS</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Over time, Shram has a unique relationship graph per user: who matters to them, conversation history, deal stages, communication cadence. This data layer is defensible and enables a future "relationship intelligence" surface — far beyond follow-ups.</p>
+    </div>
+    <div class="lever lever-moat">
+      <div class="lever-type">Moat-building</div>
+      <h3>Content-led SEO around follow-up culture</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">"How to follow up without being annoying", "the cost of a missed follow-up", "best follow-up templates for B2B" — Shram Daily (their news page) is underutilized. This should be a content moat targeting exactly their ICP's search intent.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── 07. FUTURE SCOPE ──────────────── -->
+<section id="future">
+  <div class="section-tag">07 — Future Scope</div>
+  <h2>What Shram can become</h2>
+
+  <p>Shram's core loop is solid. The opportunity now is to deepen the existing experience and expand the surface area — new channels, smarter memory, and entirely new feature categories that grow naturally from the relationship data Shram is already accumulating.</p>
+
+  <!-- IMPROVED EXISTING FEATURES -->
+  <div style="margin-top: 40px;">
+    <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent2); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+      Improving what already exists
+      <span style="flex:1; height:1px; background: var(--dim); display:block;"></span>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-tag">Memory Layer</div>
+        <h3>Visible, editable memory</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Right now, Shram's memory is a black box. Users should be able to see a "memory card" per contact — what Shram knows about them, key promises made, last interaction date. Let users correct or add context manually to improve draft quality.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">✍️</span>
+        <div class="card-tag">Draft Engine</div>
+        <h3>Multi-tone drafts + user voice learning</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Generate 2–3 draft variants per follow-up (direct, warm, brief). Track which variant users pick. Over time, Shram learns your exact tone per context — investor emails vs. client check-ins vs. casual intros — and stops offering alternatives.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-tag">Execution Agent</div>
+        <h3>Smarter action types beyond "send"</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Currently Shram sends emails/messages. Expand to: schedule a Google Meet, create a calendar block, add a contact to CRM, share a document link — all from the same one-click task interface. Follow-up is rarely just a message.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">👁</span>
+        <div class="card-tag">Screen Observer</div>
+        <h3>Priority scoring on surfaced follow-ups</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Not all missed follow-ups are equal. Add a priority signal — how warm is this lead, how recent was the conversation, how important is this person to your work — and surface the top 3 daily, not 20 at once. Reduce cognitive load, increase action rate.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW FEATURES -->
+  <div style="margin-top: 48px;">
+    <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+      New features to build
+      <span style="flex:1; height:1px; background: var(--dim); display:block;"></span>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Relationship Health Dashboard</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">A visual map of your top contacts — color-coded by last interaction recency, relationship warmth, and pending follow-ups. Gives users a real-time "CRM without the CRM" view. Weekly report: who went cold this week, who's responsive, who needs a reactivation.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">💬</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Slack + LinkedIn + Teams monitoring</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">The most high-value professional follow-ups often live in Slack DMs and LinkedIn messages — neither of which Shram currently covers. Desktop screen-reading can extend to these surfaces without API integrations, keeping the zero-setup philosophy intact.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗣️</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Meeting debrief → follow-up auto-generation</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">After a Google Meet or Zoom ends, Shram reads the calendar event + any transcript/notes available and auto-generates a post-meeting follow-up: summary, action items, next step — ready to send in one click. No manual note-taking required.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔔</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Relationship re-activation nudges</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Shram detects contacts you haven't spoken to in 30/60/90 days and surfaces a gentle "reconnect" prompt — with context on what you last discussed and a drafted warm-up message. Turns cold contacts into active ones before they're lost entirely.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📎</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Smart attachment suggestions</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">When Shram drafts a follow-up referencing "the proposal" or "the deck", it should surface the relevant file from Google Drive / local disk automatically and attach it to the draft. Closes the gap between "I'll send it" and it actually being sent.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌐</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Windows support</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Mac-only is a smart early constraint, but it limits TAM to ~30% of Indian professionals. A Windows desktop agent — even in beta — opens up the remaining 70%, especially in enterprise and mid-market where Windows dominates. This is the single biggest TAM unlock available.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-tag">New Feature</div>
+        <h3>Shared context for small teams</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">For 2–5 person founding teams or sales pods: shared relationship memory. If your co-founder spoke to an investor last week, you shouldn't be reaching out without context. Shram becomes the team's shared relationship OS, not just a personal tool.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔗</span>
+        <div class="card-tag">New Feature</div>
+        <h3>CRM sync (HubSpot / Pipedrive)</h3>
+        <p style="font-size: 13px; margin: 0; color: var(--muted);">Push completed follow-ups and contact interaction logs into HubSpot or Pipedrive automatically. This makes Shram a CRM enrichment layer — not a replacement — which enterprise sales teams will pay a premium for. Also enables a logged audit trail per contact.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- LONG-TERM VISION -->
+  <div style="margin-top: 48px;">
+    <div style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent3); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+      Long-term vision
+      <span style="flex:1; height:1px; background: var(--dim); display:block;"></span>
+    </div>
+    <div class="obs-box">
+      <blockquote>"Shram starts as a follow-up tool. It ends as the professional relationship graph for every knowledge worker — the only system that knows what actually happened between people, not what got manually logged."</blockquote>
+    </div>
+    <div class="two-col" style="margin-top: 24px;">
+      <div>
+        <h3>Relationship OS</h3>
+        <ul class="bullet-list" style="margin-top: 10px;">
+          <li>Know which relationships are growing vs. cooling across your entire network</li>
+          <li>Surface "hidden connectors" — contacts who can intro you to others you're trying to reach</li>
+          <li>Pre-meeting briefs: "You're meeting Rahul tomorrow. Last discussed: Series A deck. He owes you a term sheet update."</li>
+          <li>Life-of-relationship analytics — how has your relationship with a key investor evolved over 2 years?</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Proactive intelligence layer</h3>
+        <ul class="bullet-list" style="margin-top: 10px;">
+          <li>Shram detects when a contact gets promoted, raises funding, or posts a job — and prompts a congratulatory reconnect</li>
+          <li>Cross-referencing public signals (LinkedIn activity, news) with private context (your conversation history)</li>
+          <li>Suggests the best time to reach out based on your recipient's historical reply patterns</li>
+          <li>Eventually: voice interface — "Shram, what do I owe to people I met at the summit last month?"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ──────────────── 08. ONE BIG BET ──────────────── -->
+<section id="bet">
+  <div class="section-tag">08 — The One Big Bet</div>
+  <h2>What Shram should double down on</h2>
+
+  <div class="obs-box">
+    <blockquote>"Memory quality is the product. Everything else is the interface."</blockquote>
+  </div>
+
+  <p style="margin-top: 24px;">The follow-up agent is the wedge. The relationship memory layer is the business. Every tool in the market — CRM, task manager, email client — knows what you tell it. Shram knows what actually happened. That's the structural advantage no incumbent can easily replicate.</p>
+
+  <p>The risk is shipping too many features before the core memory is magical. A user who experiences "Shram remembered that I promised to send the Annexure 3 from our call 6 weeks ago" will never churn. That's the bar. Build to that, not to feature parity.</p>
+
+  <div class="card-grid" style="margin-top: 24px;">
+    <div class="card">
+      <span class="card-icon">🎯</span>
+      <h3>North Star Metric</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Follow-ups executed per active user per week. If this compounds over 90 days, Shram is working. Target: 5+ per user/week by month 3.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🏆</span>
+      <h3>The winning thesis</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Shram becomes the first tool professionals open in the morning. Not because it's a task manager — but because it tells them what their relationships need today. That's a new category: relationship operating system.</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">⚠️</span>
+      <h3>The failure mode to avoid</h3>
+      <p style="font-size: 13px; margin: 0; color: var(--muted);">Becoming another reminder tool that users disable after a week because drafts aren't good enough. Memory quality must hit a high bar in beta before any growth push. Bad drafts = trust death.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <div>
+    <div class="footer-brand">shram.ai</div>
+    <div style="font-size: 11px; margin-top: 4px; color: var(--muted);">Product Breakdown & Future Scope — April 2026</div>
+  </div>
+  <div style="text-align: right;">
+    <div style="color: var(--text); margin-bottom: 4px;">Satyam Jadhav</div>
+    <div style="color: var(--muted); font-size: 11px;">AI Solutions Engineer · satyamj.work@gmail.com</div>
+    <div style="color: var(--muted); font-size: 11px; margin-top: 2px;">Candidate — Founder's Office Generalist</div>
+  </div>
+</footer>
+
+</body>
+</html>
